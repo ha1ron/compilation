@@ -48,12 +48,18 @@ start-of-selection.
 *&---------------------------------------------------------------------*
 FORM ADD_NODES  USING P_REF_TREE TYPE REF TO cl_column_tree_model.
 
-  data: wa_item type treemcitem.
+   data: tab_item type treemcitab,
+        node_key type tm_nodekey.
 
-  wa_item-class = p_class.
-  wa_item-item_name = p_name.
-  wa_item-text = p_value.
-  append wa_item to p_tab_item.
+  node_key = object.
+
+  perform add_field using '2' 'BASE_OBJECT' object changing tab_item.
+
+  p_ref_tree->add_node( exporting node_key       = node_key
+                                  isfolder       = 'X'
+                                  item_table     = tab_item ).
+
+  perform next_node using p_ref_tree node_key.
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -72,20 +78,11 @@ ENDFORM.
 *&---------------------------------------------------------------------*
 form ADD_FIELD  using p_class p_name p_value changing p_tab_item type standard table.
 
-  data: wa_item     type treemcitem,
-        local_value type string.
-
-  local_value = p_value.
+  data: wa_item type treemcitem.
 
   wa_item-class = p_class.
   wa_item-item_name = p_name.
-
-  if p_name = 'STATUS'.
-    wa_item-T_IMAGE = local_value.
-    local_value = ''.
-  endif.
-
-  wa_item-text = local_value.
+  wa_item-text = p_value.
   append wa_item to p_tab_item.
 ENDFORM.
 *&---------------------------------------------------------------------*
