@@ -77,12 +77,17 @@ ENDFORM.
 *&      Form  ADD_FIELD
 *&---------------------------------------------------------------------*
 form ADD_FIELD  using p_class p_name p_value changing p_tab_item type standard table.
-
   data: wa_item type treemcitem.
 
   wa_item-class = p_class.
   wa_item-item_name = p_name.
-  wa_item-text = p_value.
+
+  if p_name = 'BASE_OBJECT' and p_value cs '@'.
+    split p_value at '@' into wa_item-text data(trash).
+  else.
+    wa_item-text = p_value.
+  endif.
+
   append wa_item to p_tab_item.
 ENDFORM.
 *&---------------------------------------------------------------------*
